@@ -1,0 +1,79 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+  <l:layout title="${it.displayName}" norefresh="true">
+
+    <st:include it="${it.owner}" page="sidepanel.jelly"/>
+
+    <l:main-panel>
+
+      <issues:bootstrap-css/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/datatables.min.css"/>
+      <issues:fontawesome-css/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+
+      <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/popper.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/bootstrap.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/datatables.min.js"/>
+      
+      <div class="fluid-container">
+
+        <h3>${it.displayName}</h3>
+
+        <table class="table table-responsive table-responsive-block table-hover table-striped" id="fixed">
+          <colgroup>
+            <col class="col-width-5"/>
+            <col class="col-width-1"/>
+            <col class="col-width-1"/>
+            <j:if test="${it.issues.hasCategories()}">
+              <col class="col-width-2"/>
+            </j:if>
+            <j:if test="${it.issues.hasTypes()}">
+              <col class="col-width-3"/>
+            </j:if>
+          </colgroup>
+          <thead>
+            <tr>
+              <th>${%File}</th>
+              <th>${%Line}</th>
+              <th>${%Severity}</th>
+              <j:if test="${it.issues.hasCategories()}">
+                <th>${%Category}</th>
+              </j:if>
+              <j:if test="${it.issues.hasTypes()}">
+                <th>${%Type}</th>
+              </j:if>
+            </tr>
+          </thead>
+          <tbody>
+            <j:forEach var="issue" items="${it.issues}">
+              <tr>
+                <td>${it.getFileDisplayName(issue)}</td>
+                <td>
+                  <j:choose>
+                    <j:when test="${issue.lineStart &lt; 1}">
+                      -
+                    </j:when>
+                    <j:otherwise>
+                      ${issue.lineStart}
+                    </j:otherwise>
+                  </j:choose>
+                </td>
+                <td>${it.getLocalizedSeverity(issue.severity)}</td>
+                <j:if test="${it.issues.hasCategories()}">
+                  <td>${issue.category}</td>
+                </j:if>
+                <j:if test="${it.issues.hasTypes()}">
+                  <td>${issue.type}</td>
+                </j:if>
+              </tr>
+            </j:forEach>
+          </tbody>
+        </table>
+      </div>
+
+    </l:main-panel>
+  </l:layout>
+</j:jelly>
